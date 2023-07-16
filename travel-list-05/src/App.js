@@ -7,12 +7,36 @@ const initialItems = [
 ];
 
 export default function App() {
+  const [items, setItems] = useState([]);
+
+  function handleAddItems(item) {
+    setItems((items) => [...items, item]);
+
+    console.log(items);
+  }
+
+  function handleDelete(id) {
+    setItems((items) => items.filter((item) => item.id !== id));
+  }
+
+  function handleToggleItem(id) {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
+
   return (
     <div className="app">
       <Logo />
-      <Form />
-      <PackingList />
-      <Stats />
+      <Form handleAddItems={handleAddItems} />
+      <PackingList
+        items={items}
+        handleDelete={handleDelete}
+        onToggleItem={handleToggleItem}
+      />
+      <Stats items={items} />
     </div>
   );
 }
@@ -21,10 +45,9 @@ function Logo() {
   return <h1>Far Away </h1>;
 }
 
-function Form() {
+function Form({ handleAddItems }) {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [items, setItems] = useState(initialItems);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -38,7 +61,7 @@ function Form() {
       id: Math.round(Math.random() * 100 + 1),
     };
 
-    setItems([newItem, ...items]);
+    handleAddItems(newItem);
 
     console.log(initialItems);
     setDescription("");
@@ -73,33 +96,47 @@ function Form() {
   );
 }
 
-function PackingList() {
+function PackingList({ items, handleDelete, onToggleItem }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => (
-          <Item item={item} />
+        {items.map((item) => (
+          <Item
+            item={item}
+            handleDelete={handleDelete}
+            onToggleItem={onToggleItem}
+          />
         ))}
       </ul>
     </div>
   );
 }
 
-function Item({ item }) {
+function Item({ item, handleDelete, onToggleItem }) {
   return (
     <li>
+      <input type="checkbox" onChange={() => onToggleItem(item.id)} />
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
-      <button>❌</button>
+      <button onClick={() => handleDelete(item.id)}>❌</button>
     </li>
   );
 }
 
-function Stats() {
+function Stats({ items }) {
+  const total = items.length;
+
+  const packed = items.filter((item) => item.packed).length;
+
+  const percentage = Math.round(packed / total) * 100;
+
   return (
     <footer className="stats">
-      <em></em>
+      <em>
+        You have {total} on your bag, and you already packed {packed} (
+        {percentage}%)
+      </em>
     </footer>
   );
 }
