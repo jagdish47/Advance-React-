@@ -1,7 +1,13 @@
+import Header from "./Header";
+import Main from "./Main";
 const App = () => {
   return (
     <div>
-      <h1>Hello Wrold</h1>
+      <Header />
+      <Main>
+        <p>1/15</p>
+        <p>Questions</p>
+      </Main>
     </div>
   );
 };
