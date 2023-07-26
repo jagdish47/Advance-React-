@@ -1,7 +1,7 @@
 const Main = ({ children }) => {
-  console.log(children);
+  // console.log(children);
 
-  return <div>{/* <h1>{children}</h1> */}</div>;
+  return <div>{children}</div>;
 };
 
 export default Main;
